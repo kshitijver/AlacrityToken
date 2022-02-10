@@ -14,7 +14,15 @@ contract AlacrityToken {
 		uint256 _value
 	);
 
+	// Approval Event
+	event Approval(
+		address indexed _owner,
+		address indexed _spender,
+		uint256 indexed _value
+	);
+
 	mapping(address => uint256) public balanceOf;
+	mapping(address => mapping(address => uint256)) public allowance;
 
 	constructor (uint256 _initialSupply) public {
 		// Allocate the initial supply
@@ -34,6 +42,40 @@ contract AlacrityToken {
 		// Trigger transfer event
 		emit Transfer(msg.sender,_to,_value);
 
+		return true;
+	}
+
+	// Delegated Transfer
+
+	// Approve 
+	function approve(address _spender,uint256 _value) public returns (bool success){
+
+		require(msg.sender != _spender);
+		require(msg.sender != address(0));
+		require(_spender != address(0));
+
+		allowance[msg.sender][_spender] = _value;
+
+		// Trigger approval event
+		emit Approval(msg.sender,_spender,_value);
+
+		return true;
+	}
+
+	// Transfer From
+	function transferFrom(address _from,address _to,uint256 _value) public returns (bool success){
+		
+		require(balanceOf[_from] >= _value);
+		require(allowance[_from][msg.sender] >= _value);
+		
+		balanceOf[_from] -= _value;
+		balanceOf[_to] += _value;
+		
+		allowance[_from][msg.sender] -= _value;
+
+		// Trigger Transfer event
+		emit Transfer(_from,_to,_value);
+		
 		return true;
 	}
 }
