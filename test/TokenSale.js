@@ -62,5 +62,28 @@ contract("AlacTokenSale", function(accounts){
 		}).then(assert.fail).catch(function(error){
 			assert(error.message.indexOf('revert') >= 0, "Reverts if contract does not has the required number of tokens");
 		});
-	})
+	});
+
+
+	it("ends token sale", function(){
+		return Token.deployed().then(function(instance){
+			tokenInstance = instance;
+			return TokenSale.deployed();
+		}).then(function(instance){
+			tokenSaleInstance = instance;
+			// Try to end sale by account other than the admin
+			return tokenSaleInstance.endSale({from : buyer});
+		}).then(assert.fail).catch(function(error){
+			assert(error.message.indexOf('revert') >= 0, "only admin can end token sale");
+			return tokenSaleInstance.endSale({from:admin});
+		}).then(function(receipt){
+			return tokenInstance.balanceOf(admin);
+		}).then(function(balance){
+            assert.equal(balance.toNumber(),999990, 'return all unsold token to admin')
+            // Check that the contract has no balance
+            return tokenInstance.balanceOf(tokenSaleInstance.address);
+        }).then(function(balance){
+        	assert.equal(balance.toNumber(),0,"Balance has been reset");
+        });
+	});
 });

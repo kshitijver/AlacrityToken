@@ -34,10 +34,19 @@ contract AlacTokenSale{
 		require(msg.value == multiply(_numberOfTokens,tokenPrice));
 
 		require(tokenContract.balanceOf(address(this)) >= _numberOfTokens);
-		// Require that a transaction is successful
+		
 		require(tokenContract.transfer(msg.sender,_numberOfTokens));
 		
 		tokensSold += _numberOfTokens;
 		emit Sell(msg.sender,_numberOfTokens);
+	}
+
+	// Ending the Alac Token Sale
+	function endSale() public {
+		
+		require(msg.sender == admin);
+		require(tokenContract.transfer(admin,tokenContract.balanceOf(address(this))));
+
+		selfdestruct(payable(address(this)));
 	}
 }
