@@ -24,7 +24,7 @@ contract AlacrityToken {
 	mapping(address => uint256) public balanceOf;
 	mapping(address => mapping(address => uint256)) public allowance;
 
-	constructor (uint256 _initialSupply) public {
+	constructor (uint256 _initialSupply) {
 		// Allocate the initial supply
 		balanceOf[msg.sender] = _initialSupply;
 		totalSupply = _initialSupply;
