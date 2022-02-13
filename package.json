@@ -6,8 +6,8 @@
 	"directories": {
 		"test": "test"
 	},
-	"scripts" : {
-		"dev" : "lite-server"
+	"scripts": {
+		"dev": "lite-server"
 	},
 	"author": "Kshitij",
 	"license": "ISC",
